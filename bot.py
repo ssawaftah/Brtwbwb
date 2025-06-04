@@ -3,8 +3,7 @@ from telegram import (
     Update,
     InlineKeyboardButton,
     InlineKeyboardMarkup,
-    ReplyKeyboardMarkup,
-    KeyboardButton
+    ReplyKeyboardMarkup
 )
 from telegram.ext import (
     ApplicationBuilder,
@@ -17,7 +16,7 @@ from telegram.ext import (
 
 TOKEN = os.getenv('BOT_TOKEN')
 
-async def start(update: Update, context: CallbackContext) -> None:
+async def start(update: Update, context: CallbackContext, from_button: bool = False) -> None:
     user = update.effective_user
     welcome_message = (
         f"مرحبًا {user.first_name} في بوت قصص أحمد،\n"
@@ -25,79 +24,124 @@ async def start(update: Update, context: CallbackContext) -> None:
         "📚 القصص الشائعة هذا الأسبوع:"
     )
     
-    # أزرار القصص الشائعة (Inline Keyboard)
+    # أزرار القصص الشائعة
     stories_buttons = [
         [InlineKeyboardButton("القصة 1: رحلة الغموض", callback_data='story_1')],
         [InlineKeyboardButton("القصة 2: الحب السري", callback_data='story_2')],
-        [InlineKeyboardButton("القصة 3: الليلة الموعودة", callback_data='story_3')]
+        [InlineKeyboardButton("القصة 3: الليلة الموعودة", callback_data='story_3')],
+        [InlineKeyboardButton("🏠 القائمة الرئيسية", callback_data='main_menu')]
     ]
     
-    # أزرار الأقسام (Reply Keyboard)
+    # أزرار الأقسام مع زر الرئيسية
     categories_buttons = [
         ["🔞 قسم القصص الجريئة", "📖 قسم القصص الرومانسية"],
-        ["🕵️ قسم القصص الغامضة", "🎭 قسم القصص الدرامية"]
+        ["🕵️ قسم القصص الغامضة", "🎭 قسم القصص الدرامية"],
+        ["🏠 القائمة الرئيسية"]
     ]
     
-    await update.message.reply_text(
-        welcome_message,
-        reply_markup=InlineKeyboardMarkup(stories_buttons)
-    )
-    
-    await update.message.reply_text(
-        "أو يمكنك تصفح القصص حسب الأقسام:",
-        reply_markup=ReplyKeyboardMarkup(
-            categories_buttons,
-            resize_keyboard=True,
-            one_time_keyboard=True
+    if from_button:
+        await update.callback_query.edit_message_text(
+            welcome_message,
+            reply_markup=InlineKeyboardMarkup(stories_buttons)
+    else:
+        await update.message.reply_text(
+            welcome_message,
+            reply_markup=InlineKeyboardMarkup(stories_buttons))
+        
+        await update.message.reply_text(
+            "أو يمكنك تصفح القصص حسب الأقسام:",
+            reply_markup=ReplyKeyboardMarkup(
+                categories_buttons,
+                resize_keyboard=True,
+                one_time_keyboard=True
+            )
         )
-    )
 
 async def handle_stories(update: Update, context: CallbackContext) -> None:
     query = update.callback_query
     await query.answer()
     
+    if query.data == 'main_menu':
+        await start(update, context, from_button=True)
+        return
+    
     story_data = query.data
     stories = {
         'story_1': {
             'title': "رحلة الغموض",
-            'content': "هنا محتوى القصة الأولى...\n\nرابط القراءة: @Sexz91bot/story1"
+            'content': "هنا محتوى القصة الأولى...\n\nرابط القراءة: @Sexz91bot/story1",
+            'buttons': [
+                [InlineKeyboardButton("🏠 القائمة الرئيسية", callback_data='main_menu')]
+            ]
         },
         'story_2': {
             'title': "الحب السري",
-            'content': "هنا محتوى القصة الثانية...\n\nرابط القراءة: @Sexz91bot/story2"
+            'content': "هنا محتوى القصة الثانية...\n\nرابط القراءة: @Sexz91bot/story2",
+            'buttons': [
+                [InlineKeyboardButton("🏠 القائمة الرئيسية", callback_data='main_menu')]
+            ]
         },
         'story_3': {
             'title': "الليلة الموعودة",
-            'content': "هنا محتوى القصة الثالثة...\n\nرابط القراءة: @Sexz91bot/story3"
+            'content': "هنا محتوى القصة الثالثة...\n\nرابط القراءة: @Sexz91bot/story3",
+            'buttons': [
+                [InlineKeyboardButton("🏠 القائمة الرئيسية", callback_data='main_menu')]
+            ]
         }
     }
     
     if story_data in stories:
         story = stories[story_data]
         await query.edit_message_text(
-            f"📖 {story['title']}\n\n{story['content']}"
+            f"📖 {story['title']}\n\n{story['content']}",
+            reply_markup=InlineKeyboardMarkup(story['buttons'])
         )
 
 async def handle_categories(update: Update, context: CallbackContext) -> None:
+    if update.message.text == "🏠 القائمة الرئيسية":
+        await start(update, context)
+        return
+    
     category = update.message.text
     categories = {
-        "🔞 قسم القصص الجريئة": "جريئة",
-        "📖 قسم القصص الرومانسية": "رومانسية",
-        "🕵️ قسم القصص الغامضة": "غامضة",
-        "🎭 قسم القصص الدرامية": "درامية"
+        "🔞 قسم القصص الجريئة": {
+            "name": "الجريئة",
+            "buttons": [
+                [InlineKeyboardButton("🏠 القائمة الرئيسية", callback_data='main_menu')]
+            ]
+        },
+        "📖 قسم القصص الرومانسية": {
+            "name": "الرومانسية",
+            "buttons": [
+                [InlineKeyboardButton("🏠 القائمة الرئيسية", callback_data='main_menu')]
+            ]
+        },
+        "🕵️ قسم القصص الغامضة": {
+            "name": "الغامضة",
+            "buttons": [
+                [InlineKeyboardButton("🏠 القائمة الرئيسية", callback_data='main_menu')]
+            ]
+        },
+        "🎭 قسم القصص الدرامية": {
+            "name": "الدرامية",
+            "buttons": [
+                [InlineKeyboardButton("🏠 القائمة الرئيسية", callback_data='main_menu')]
+            ]
+        }
     }
     
     if category in categories:
+        cat_info = categories[category]
         await update.message.reply_text(
-            f"تم اختيار قسم {categories[category]}\n"
+            f"تم اختيار قسم {cat_info['name']}\n"
             "سيتم إرسال أفضل القصص في هذا القسم...\n\n"
-            "تابعنا على @Sexz91bot للحصول على المزيد"
+            "تابعنا على @Sexz91bot للحصول على المزيد",
+            reply_markup=InlineKeyboardMarkup(cat_info['buttons'])
         )
 
 def main() -> None:
     application = ApplicationBuilder().token(TOKEN).build()
     
-    # handlers
     application.add_handler(CommandHandler('start', start))
     application.add_handler(CallbackQueryHandler(handle_stories))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_categories))
