@@ -41,6 +41,7 @@ async def start(update: Update, context: CallbackContext) -> None:
     await update.message.reply_text(
         welcome_message,
         reply_markup=InlineKeyboardMarkup(stories_buttons)
+    )
     
     await update.message.reply_text(
         "أو يمكنك تصفح القصص حسب الأقسام:",
