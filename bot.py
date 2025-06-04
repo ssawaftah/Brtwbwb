@@ -1,32 +1,37 @@
 import os
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
-from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, CallbackContext
+from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, CallbackContext, ApplicationBuilder
 
 TOKEN = os.getenv('BOT_TOKEN')
 
-def start(update: Update, context: CallbackContext) -> None:
+async def start(update: Update, context: CallbackContext) -> None:
     buttons = [
         [InlineKeyboardButton("الدعم الفني", callback_data='support')],
         [InlineKeyboardButton("الأسعار", callback_data='pricing')],
         [InlineKeyboardButton("الموقع الرسمي", url='https://example.com')]
     ]
     
-    update.message.reply_text(
+    await update.message.reply_text(
         "🔍 اختر أحد الخيارات:",
         reply_markup=InlineKeyboardMarkup(buttons)
     )
 
-def button_click(update: Update, context: CallbackContext) -> None:
+async def button_click(update: Update, context: CallbackContext) -> None:
     query = update.callback_query
-    query.answer()
+    await query.answer()
     
     if query.data == 'support':
-        query.edit_message_text("📩 تواصل مع الدعم: @SupportAccount")
+        await query.edit_message_text("📩 تواصل مع الدعم: @SupportAccount")
     elif query.data == 'pricing':
-        query.edit_message_text("💲 باقات الخدمة:\n- الأساسية: 10$\n- المميزة: 20$")
+        await query.edit_message_text("💲 باقات الخدمة:\n- الأساسية: 10$\n- المميزة: 20$")
 
-updater = Updater(TOKEN)
-updater.dispatcher.add_handler(CommandHandler('start', start))
-updater.dispatcher.add_handler(CallbackQueryHandler(button_click))
+def main() -> None:
+    application = ApplicationBuilder().token(TOKEN).build()
+    
+    application.add_handler(CommandHandler('start', start))
+    application.add_handler(CallbackQueryHandler(button_click))
+    
+    application.run_polling()
 
-updater.start_polling()
+if __name__ == '__main__':
+    main()
