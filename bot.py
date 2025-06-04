@@ -106,25 +106,25 @@ async def handle_categories(update: Update, context: CallbackContext) -> None:
     
     category = update.message.text
     categories = {
-        "🔞 قسم القصص الجريئة": {
+        "قصص سكس": {
             "name": "الجريئة",
             "buttons": [
                 [InlineKeyboardButton("🏠 القائمة الرئيسية", callback_data='main_menu')]
             ]
         },
-        "📖 قسم القصص الرومانسية": {
+        "قصص سكس محارم": {
             "name": "الرومانسية",
             "buttons": [
                 [InlineKeyboardButton("🏠 القائمة الرئيسية", callback_data='main_menu')]
             ]
         },
-        "🕵️ قسم القصص الغامضة": {
+        "قصص سكس سحاق": {
             "name": "الغامضة",
             "buttons": [
                 [InlineKeyboardButton("🏠 القائمة الرئيسية", callback_data='main_menu')]
             ]
         },
-        "🎭 قسم القصص الدرامية": {
+        "قصص سكس الدياثة": {
             "name": "الدرامية",
             "buttons": [
                 [InlineKeyboardButton("🏠 القائمة الرئيسية", callback_data='main_menu')]
