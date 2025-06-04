@@ -34,8 +34,10 @@ async def start(update: Update, context: CallbackContext, from_button: bool = Fa
     
     # أزرار الأقسام مع زر الرئيسية
     categories_buttons = [
-        ["🔞 قسم القصص الجريئة", "📖 قسم القصص الرومانسية"],
-        ["🕵️ قسم القصص الغامضة", "🎭 قسم القصص الدرامية"],
+        ["قصص سكس"],
+        ["قصص سكس محارم"],
+        ["قصص سكس سحاق"],
+        ["قصص سكس دياثة"],
         ["🏠 القائمة الرئيسية"]
     ]
     
@@ -107,25 +109,25 @@ async def handle_categories(update: Update, context: CallbackContext) -> None:
     category = update.message.text
     categories = {
         "قصص سكس": {
-            "name": "الجريئة",
+            "name": "قصص سكس",
             "buttons": [
                 [InlineKeyboardButton("🏠 القائمة الرئيسية", callback_data='main_menu')]
             ]
         },
         "قصص سكس محارم": {
-            "name": "الرومانسية",
+            "name": "قصص سكس محارم",
             "buttons": [
                 [InlineKeyboardButton("🏠 القائمة الرئيسية", callback_data='main_menu')]
             ]
         },
         "قصص سكس سحاق": {
-            "name": "الغامضة",
+            "name": "قصص سكس سحاق",
             "buttons": [
                 [InlineKeyboardButton("🏠 القائمة الرئيسية", callback_data='main_menu')]
             ]
         },
         "قصص سكس الدياثة": {
-            "name": "الدرامية",
+            "name": "قصص سكس الدياثة",
             "buttons": [
                 [InlineKeyboardButton("🏠 القائمة الرئيسية", callback_data='main_menu')]
             ]
@@ -152,3 +154,4 @@ def main() -> None:
 
 if __name__ == '__main__':
     main()
+
