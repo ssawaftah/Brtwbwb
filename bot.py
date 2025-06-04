@@ -41,15 +41,17 @@ async def start(update: Update, context: CallbackContext, from_button: bool = Fa
     
     if from_button:
         await update.callback_query.edit_message_text(
-            welcome_message,
+            text=welcome_message,
             reply_markup=InlineKeyboardMarkup(stories_buttons)
+        )
     else:
         await update.message.reply_text(
-            welcome_message,
-            reply_markup=InlineKeyboardMarkup(stories_buttons))
+            text=welcome_message,
+            reply_markup=InlineKeyboardMarkup(stories_buttons)
+        )
         
         await update.message.reply_text(
-            "أو يمكنك تصفح القصص حسب الأقسام:",
+            text="أو يمكنك تصفح القصص حسب الأقسام:",
             reply_markup=ReplyKeyboardMarkup(
                 categories_buttons,
                 resize_keyboard=True,
@@ -93,7 +95,7 @@ async def handle_stories(update: Update, context: CallbackContext) -> None:
     if story_data in stories:
         story = stories[story_data]
         await query.edit_message_text(
-            f"📖 {story['title']}\n\n{story['content']}",
+            text=f"📖 {story['title']}\n\n{story['content']}",
             reply_markup=InlineKeyboardMarkup(story['buttons'])
         )
 
@@ -133,9 +135,9 @@ async def handle_categories(update: Update, context: CallbackContext) -> None:
     if category in categories:
         cat_info = categories[category]
         await update.message.reply_text(
-            f"تم اختيار قسم {cat_info['name']}\n"
-            "سيتم إرسال أفضل القصص في هذا القسم...\n\n"
-            "تابعنا على @Sexz91bot للحصول على المزيد",
+            text=f"تم اختيار قسم {cat_info['name']}\n"
+                 "سيتم إرسال أفضل القصص في هذا القسم...\n\n"
+                 "تابعنا على @Sexz91bot للحصول على المزيد",
             reply_markup=InlineKeyboardMarkup(cat_info['buttons'])
         )
 
